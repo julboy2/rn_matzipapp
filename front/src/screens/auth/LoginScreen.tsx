@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {SafeAreaView, StyleSheet, Text, TextInput, View} from 'react-native';
 import InputField from '../../components/InputField';
+import CustomButton from '../../components/CustomButton';
+import useForm from '../../hooks/useForm';
+import {validateLogin} from '../../utils';
 
 function LoginScreen() {
+  // 방법 1.
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
 
@@ -14,52 +18,80 @@ function LoginScreen() {
   //   setPassword(text);
   // };
 
-  const [values, setValues] = useState({
-    email: '',
-    password: '',
+  // 방법 2.
+  // const [values, setValues] = useState({
+  //   email: '',
+  //   password: '',
+  // });
+
+  // const [touched, setTouched] = useState({
+  //   email: false,
+  //   password: false,
+  // });
+
+  // const handleChanteText = (name: string, text: string) => {
+  //   setValues({
+  //     ...values,
+  //     [name]: text,
+  //   });
+  // };
+
+  // const handleBlur = (name: string) => {
+  //   setTouched({
+  //     ...touched,
+  //     [name]: true,
+  //   });
+  // };
+
+  const passwordRef = useRef<TextInput | null>(null);
+
+  const login = useForm({
+    initailValue: {email: '', password: ''},
+    validate: validateLogin,
   });
 
-  const [touched, setTouched] = useState({
-    email: false,
-    password: false,
-  });
-
-  const handleChanteText = (name: string, text: string) => {
-    setValues({
-      ...values,
-      [name]: text,
-    });
-  };
-
-  const handleBlur = (name: string) => {
-    setTouched({
-      ...touched,
-      [name]: true,
-    });
+  const handleSubmit = () => {
+    console.log('submit', login.values);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inputContainer}>
         <InputField
+          autoFocus
           placeholder="이메일"
-          error="이메일을 입력하세요"
+          error={login.errors.email}
           inputMode="email"
-          touched={touched.email}
-          value={values.email}
-          onChangeText={text => handleChanteText('email', text)}
-          onBlur={() => handleBlur('email')}
+          touched={login.touched.email}
+          returnKeyType="next"
+          blurOnSubmit={false}
+          onSubmitEditing={() => passwordRef.current?.focus()}
+          // value={values.email}
+          // onChangeText={text => handleChanteText('email', text)}
+          // onBlur={() => handleBlur('email')}
+          {...login.getTextInputProps('email')}
         />
         <InputField
+          ref={passwordRef}
           placeholder="비밀번호"
-          error="비밀번호를 입력하세요"
+          error={login.errors.password}
           secureTextEntry
-          touched={touched.password}
-          value={values.password}
-          onChangeText={text => handleChanteText('password', text)}
-          onBlur={() => handleBlur('password')}
+          touched={login.touched.password}
+          returnKeyType="join"
+          blurOnSubmit={false}
+          onSubmitEditing={handleSubmit}
+          // value={values.password}
+          // onChangeText={text => handleChanteText('password', text)}
+          // onBlur={() => handleBlur('password')}
+          {...login.getTextInputProps('password')}
         />
       </View>
+      <CustomButton
+        label="로그인"
+        variant="filled"
+        size="large"
+        onPress={handleSubmit}
+      />
     </SafeAreaView>
   );
 }
@@ -71,6 +103,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     gap: 20,
+    marginBottom: 30,
   },
 });
 
