@@ -13,3 +13,7 @@ react native geolocation
 
 react native permissions
 
+### 백그라운드상태로 갔다가 앱을 다시켰을때 상태
+
+AppState
+
