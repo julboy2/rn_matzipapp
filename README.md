@@ -13,6 +13,7 @@ google map style
 google map geocoding
 
 
+
 ### 나의위치 구함
 
 react native geolocation
@@ -32,3 +33,6 @@ AppState
 react native vector icons
 
 
+### 슬라이더
+
+react-native-community/slider
