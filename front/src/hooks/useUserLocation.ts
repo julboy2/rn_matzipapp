@@ -5,8 +5,8 @@ import useAppState from './useAppState';
 
 function useUserLocation() {
   const [userLocation, setUserLocation] = useState<LatLng>({
-    latitude: 37.5516032365118,
-    longitude: 126.98989626020192,
+    latitude: 37.60391272301476,
+    longitude: 127.09000132977961,
   });
   const [isUserLocationError, setIsUserLocationError] =
     useState<boolean>(false);
