@@ -39,3 +39,9 @@ react native vector icons
 ### 슬라이더
 
 react-native-community/slider
+
+
+### 갤러리에서 이미지 선택 기능
+
+react native crop image picker
+
