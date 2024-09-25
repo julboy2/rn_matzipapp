@@ -45,3 +45,8 @@ react-native-community/slider
 
 react native crop image picker
 
+### 이미지 업로드
+
+react native crop image picker
+
+
