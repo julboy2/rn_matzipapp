@@ -4,19 +4,25 @@ import {MapStackParamList} from '@/navigations/stack/MapStackNavigator';
 import {StackScreenProps} from '@react-navigation/stack';
 import Octicons from 'react-native-vector-icons/Octicons';
 
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomButton from '@/components/CustomButton';
 import {useEffect, useRef, useState} from 'react';
 import useForm from '@/hooks/useForm';
-import {validateAddPost} from '@/utils';
+import {getDateWithSeparator, validateAddPost} from '@/utils';
 import AddPostHeaderRight from '@/components/AddPostHeaderRight';
 import useMutateCreatePost from '@/hooks/queries/useMutateCreatePost';
 import {MarkerColor} from '@/types/domain';
 import useGetAddress from '@/hooks/useGetAddress';
 import MarkerSelector from '@/components/MarkerSelector';
 import ScoreInput from '@/components/ScoreInput';
+import DatePickerOption from '@/components/DatePickerOption';
+import useModal from '@/hooks/useModal';
+import ImageInput from '@/components/ImageInput';
+import usePermission from '@/hooks/usePermission';
+import useImagePicker from '@/hooks/useImagePicker';
+import PreviewImageList from '@/components/PreviewImageListList';
 
 type AddPostScreenProps = StackScreenProps<
   MapStackParamList,
@@ -34,6 +40,25 @@ function AddPostScreen({route, navigation}: AddPostScreenProps) {
 
   const [markerColor, setMarkerColor] = useState<MarkerColor>('RED');
   const [score, setScore] = useState(5);
+  const [date, setDate] = useState(new Date());
+  const [isPicked, setIsPicked] = useState(false);
+  const dateOption = useModal();
+  const iamgePicker = useImagePicker({
+    initialImages: [],
+  });
+  usePermission('PHOTO');
+
+  // console.log('imagePicker.imageUris', iamgePicker.imageUris);
+
+  const handleChangeDate = (pickedDate: Date) => {
+    setDate(pickedDate);
+  };
+
+  const handleConfirmDate = () => {
+    setIsPicked(true);
+    dateOption.hide();
+  };
+
   const address = useGetAddress(location);
 
   const handleSelectMarker = (name: MarkerColor) => {
@@ -46,7 +71,7 @@ function AddPostScreen({route, navigation}: AddPostScreenProps) {
 
   const handleSubmit = () => {
     const body = {
-      date: new Date(),
+      date: date,
       title: addPost.values.title,
       description: addPost.values.description,
       color: markerColor,
@@ -76,7 +101,12 @@ function AddPostScreen({route, navigation}: AddPostScreenProps) {
               <Octicons name="location" size={16} color={colors.GRAY_500} />
             }
           />
-          <CustomButton variant="outlined" size="large" label="날짜 선택" />
+          <CustomButton
+            variant="outlined"
+            size="large"
+            label={isPicked ? getDateWithSeparator(date, '. ') : '날짜 선택'}
+            onPress={dateOption.show}
+          />
           <InputField
             placeholder="제목을 입력하세요"
             error={addPost.errors.title}
@@ -101,6 +131,20 @@ function AddPostScreen({route, navigation}: AddPostScreenProps) {
             onPressMarker={handleSelectMarker}
           />
           <ScoreInput score={score} onChangeScore={handleChangeScore} />
+          <View style={styles.imagesViewer}>
+            <ImageInput onChange={iamgePicker.handleChange} />
+            <PreviewImageList
+              imageUris={iamgePicker.imageUris}
+              onDelete={iamgePicker.delete}
+              onChangeOrder={iamgePicker.changeOrder}
+            />
+          </View>
+          <DatePickerOption
+            date={date}
+            isVisible={dateOption.isVisible}
+            onChangeDate={handleChangeDate}
+            onConfirmDate={handleConfirmDate}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -119,6 +163,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     gap: 20,
     marginBottom: 20,
+  },
+  imagesViewer: {
+    flexDirection: 'row',
   },
 });
 
