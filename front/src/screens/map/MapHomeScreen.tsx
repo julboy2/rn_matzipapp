@@ -94,22 +94,22 @@ function MapHomeScreen() {
           ...userLocation,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }}
-      />
-      {markers.map(({id, color, score, ...coordinate}) => (
-        <CustomMarker
-          key={id}
-          color={color}
-          score={score}
-          coordinate={coordinate}
-        />
-      ))}
+        }}>
+        {markers.map(({id, color, score, ...coordinate}) => (
+          <CustomMarker
+            key={id}
+            color={color}
+            score={score}
+            coordinate={coordinate}
+          />
+        ))}
 
-      {selectLocation && (
-        <Callout>
-          <Marker coordinate={selectLocation} />
-        </Callout>
-      )}
+        {selectLocation && (
+          <Callout>
+            <Marker coordinate={selectLocation} />
+          </Callout>
+        )}
+      </MapView>
       <Pressable
         style={[styles.drawerButton, {top: inset.top || 20}]}
         onPress={() => navigation.openDrawer()}>

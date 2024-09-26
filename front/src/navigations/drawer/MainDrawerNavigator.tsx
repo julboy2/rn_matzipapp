@@ -33,7 +33,6 @@ function DrawerIcons(route: RouteProp<MainDrawerParamList>, focused: boolean) {
       break;
     }
   }
-
   return (
     <MaterialIcons
       name={iconName}
