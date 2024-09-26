@@ -44,6 +44,18 @@ function MapHomeScreen() {
 
   usePermission('LOCATION');
 
+  const moveMapView = (coordinate: LatLng) => {
+    mapRef.current?.animateToRegion({
+      ...coordinate,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    });
+  };
+  // 마커를 클릭했을때 위치이동
+  const handlePressMarket = (coordinate: LatLng) => {
+    moveMapView(coordinate);
+  };
+
   const handleLongPressMapView = ({nativeEvent}: LongPressEvent) => {
     setSelectLocation(nativeEvent.coordinate);
     console.log(
@@ -71,12 +83,7 @@ function MapHomeScreen() {
       return;
     }
 
-    mapRef.current?.animateToRegion({
-      latitude: userLocation?.latitude,
-      longitude: userLocation?.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
+    moveMapView(userLocation);
   };
 
   return (
@@ -101,6 +108,7 @@ function MapHomeScreen() {
             color={color}
             score={score}
             coordinate={coordinate}
+            onPress={() => handlePressMarket(coordinate)}
           />
         ))}
 
