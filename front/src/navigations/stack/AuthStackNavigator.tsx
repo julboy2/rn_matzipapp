@@ -22,6 +22,9 @@ function AuthStackNavigator() {
           backgroundColor: 'white',
           shadowColor: 'gray',
         },
+        headerTitleStyle: {
+          fontSize: 15,
+        },
         headerTintColor: 'black',
       }}>
       <Stack.Screen

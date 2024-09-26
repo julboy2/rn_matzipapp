@@ -29,7 +29,6 @@ function MarkerModal({markerId, isVisible, hide}: MarkerModalProps) {
     return <></>;
   }
 
-  console.log(`${post.images[0]?.uri}`);
   return (
     <Modal visible={isVisible} transparent={true} animationType="slide">
       <SafeAreaView style={styles.optionBackground} onTouchEnd={hide}>

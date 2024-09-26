@@ -8,3 +8,7 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+
+#TODO : 배포시 .env 에 있는 config 가 안먹을 때도 있어서 아래와 같이 넣어준다.
+-keep class com.matzipapp.BuildConfig { *; }
