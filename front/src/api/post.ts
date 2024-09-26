@@ -14,7 +14,7 @@ const createPost = async (body: RequestCreatePost): Promise<ResponsePost> => {
 type ResponseSinglePost = ResponsePost & {isFavorite: boolean};
 
 const getPost = async (id: number): Promise<ResponseSinglePost> => {
-  const {data} = await axiosInstance.get(`/post/${id}`);
+  const {data} = await axiosInstance.get(`/posts/${id}`);
 
   return data;
 };

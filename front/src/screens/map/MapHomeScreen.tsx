@@ -24,6 +24,8 @@ import mapStyle from '@/style/mapStyle';
 import CustomMarker from '@/components/CustomMarker';
 import {Alert} from 'react-native';
 import {alerts} from '@/constants/messages';
+import MarkerModal from '@/components/MarkerModal';
+import useModal from '@/hooks/useModal';
 
 type Navigation = CompositeNavigationProp<
   StackNavigationProp<MapStackParamList>,
@@ -40,6 +42,9 @@ function MapHomeScreen() {
   const {userLocation, isUserLocationError} = useUserLocation();
 
   const [selectLocation, setSelectLocation] = useState<LatLng | null>();
+  const [markerId, setMarkerId] = useState<number | null>(null);
+  const markerModal = useModal();
+
   const {data: markers = []} = useGetMarkers();
 
   usePermission('LOCATION');
@@ -52,8 +57,10 @@ function MapHomeScreen() {
     });
   };
   // 마커를 클릭했을때 위치이동
-  const handlePressMarket = (coordinate: LatLng) => {
+  const handlePressMarket = (id: number, coordinate: LatLng) => {
     moveMapView(coordinate);
+    setMarkerId(id);
+    markerModal.show();
   };
 
   const handleLongPressMapView = ({nativeEvent}: LongPressEvent) => {
@@ -108,7 +115,7 @@ function MapHomeScreen() {
             color={color}
             score={score}
             coordinate={coordinate}
-            onPress={() => handlePressMarket(coordinate)}
+            onPress={() => handlePressMarket(id, coordinate)}
           />
         ))}
 
@@ -131,6 +138,12 @@ function MapHomeScreen() {
           <MaterialIcons name="my-location" color={colors.WHITE} size={25} />
         </Pressable>
       </View>
+
+      <MarkerModal
+        markerId={markerId}
+        isVisible={markerModal.isVisible}
+        hide={markerModal.hide}
+      />
     </>
   );
 }
