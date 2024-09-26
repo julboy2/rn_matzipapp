@@ -50,3 +50,7 @@ react native crop image picker
 react native crop image picker
 
 
+### 환경변수 설정
+
+react native config
+
