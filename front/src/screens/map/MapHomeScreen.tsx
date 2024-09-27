@@ -1,5 +1,4 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import useAuth from '@/hooks/queries/useAuth';
 import MapView, {
   Callout,
   LatLng,
@@ -21,10 +20,10 @@ import useGetMarkers from '@/hooks/queries/useGetMarkers';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import mapStyle from '@/style/mapStyle';
-import CustomMarker from '@/components/CustomMarker';
+import CustomMarker from '@/components/common/CustomMarker';
 import {Alert} from 'react-native';
 import {alerts} from '@/constants/messages';
-import MarkerModal from '@/components/MarkerModal';
+import MarkerModal from '@/components/map/MarkerModal';
 import useModal from '@/hooks/useModal';
 
 type Navigation = CompositeNavigationProp<
