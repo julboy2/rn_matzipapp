@@ -6,14 +6,14 @@ import MapView, {
   Marker,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
-import {colors, mapNavigations} from '@/constants';
+import {colors, mapNavigations, numbers} from '@/constants';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {MapStackParamList} from '@/navigations/stack/MapStackNavigator';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import useUserLocation from '@/hooks/useUserLocation';
 import usePermission from '@/hooks/usePermission';
 import useGetMarkers from '@/hooks/queries/useGetMarkers';
@@ -25,6 +25,7 @@ import {Alert} from 'react-native';
 import {alerts} from '@/constants/messages';
 import MarkerModal from '@/components/map/MarkerModal';
 import useModal from '@/hooks/useModal';
+import useMoveMapView from '@/hooks/useMoveMapView';
 
 type Navigation = CompositeNavigationProp<
   StackNavigationProp<MapStackParamList>,
@@ -35,7 +36,6 @@ function MapHomeScreen() {
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<Navigation>();
 
-  const mapRef = useRef<MapView | null>(null);
   // 1. 나의 위치를 구함
   // 2. 지도를 그곳으로 이동
   const {userLocation, isUserLocationError} = useUserLocation();
@@ -45,16 +45,10 @@ function MapHomeScreen() {
   const markerModal = useModal();
 
   const {data: markers = []} = useGetMarkers();
+  const {mapRef, moveMapView, handleChangeDelta} = useMoveMapView();
 
   usePermission('LOCATION');
 
-  const moveMapView = (coordinate: LatLng) => {
-    mapRef.current?.animateToRegion({
-      ...coordinate,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
-  };
   // 마커를 클릭했을때 위치이동
   const handlePressMarket = (id: number, coordinate: LatLng) => {
     moveMapView(coordinate);
@@ -103,10 +97,10 @@ function MapHomeScreen() {
         showsMyLocationButton={false}
         customMapStyle={mapStyle}
         onLongPress={handleLongPressMapView}
+        onRegionChangeComplete={handleChangeDelta} // 마지막 지도 확대시 확대값 저장
         region={{
           ...userLocation,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          ...numbers.INITIAL_DELTA,
         }}>
         {markers.map(({id, color, score, ...coordinate}) => (
           <CustomMarker

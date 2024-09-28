@@ -134,6 +134,7 @@ function AddPostScreen({route, navigation}: AddPostScreenProps) {
           <View style={styles.imagesViewer}>
             <ImageInput onChange={iamgePicker.handleChange} />
             <PreviewImageList
+              key={iamgePicker.imageUris.toString()}
               imageUris={iamgePicker.imageUris}
               onDelete={iamgePicker.delete}
               onChangeOrder={iamgePicker.changeOrder}

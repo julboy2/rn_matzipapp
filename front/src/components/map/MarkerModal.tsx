@@ -1,6 +1,6 @@
 import Octions from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '@/constants';
+import {colors, feedNavigations, mainNavigations} from '@/constants';
 import useGetPost from '@/hooks/queries/useGetPost';
 import {
   Dimensions,
@@ -15,6 +15,11 @@ import {
 } from 'react-native';
 import CustomMarker from '../common/CustomMarker';
 import {getDateWithSeparator} from '@/utils';
+import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
 
 interface MarkerModalProps {
   markerId: number | null;
@@ -22,17 +27,35 @@ interface MarkerModalProps {
   hide: () => void;
 }
 
+type Navigation = CompositeNavigationProp<
+  DrawerNavigationProp<MainDrawerParamList>,
+  StackNavigationProp<FeedStackParamList>
+>;
+
 function MarkerModal({markerId, isVisible, hide}: MarkerModalProps) {
+  const navigation = useNavigation<Navigation>();
   const {data: post, isPending, isError} = useGetPost(markerId);
 
   if (isPending || isError) {
     return <></>;
   }
 
+  const handlePressModal = () => {
+    navigation.navigate(mainNavigations.FEED, {
+      screen: feedNavigations.FEED_DETAIL,
+      params: {
+        id: post.id,
+      },
+      // 만약 지도에서 해당 포스트를 클릭한후, 피드를 클릭하면 리스트가 나오는것이 아니라
+      // 해당 포스트의 상세 화면이 나오기 때문에 리스트가 나오도록 하기 위해 아래와 같이 작성
+      initial: false,
+    });
+  };
+
   return (
     <Modal visible={isVisible} transparent={true} animationType="slide">
       <SafeAreaView style={styles.optionBackground} onTouchEnd={hide}>
-        <Pressable style={styles.cardContainer} onPress={() => {}}>
+        <Pressable style={styles.cardContainer} onPress={handlePressModal}>
           <View style={styles.cardInner}>
             <View style={styles.cardAlign}>
               {post.images.length > 0 && (
