@@ -54,3 +54,8 @@ react native crop image picker
 
 react native config
 
+### 전역상태 관리도구
+
+zustand
+
+
