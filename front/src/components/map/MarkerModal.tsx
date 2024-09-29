@@ -1,6 +1,11 @@
 import Octions from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {colors, feedNavigations, mainNavigations} from '@/constants';
+import {
+  colors,
+  feedNavigations,
+  feedTabNavigations,
+  mainNavigations,
+} from '@/constants';
 import useGetPost from '@/hooks/queries/useGetPost';
 import {
   Dimensions,
@@ -20,6 +25,8 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
 import {DrawerNavigationProp} from '@react-navigation/drawer';
 import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {FeedTabParamList} from '@/navigations/tab/FeedTabNavigator';
 
 interface MarkerModalProps {
   markerId: number | null;
@@ -29,7 +36,7 @@ interface MarkerModalProps {
 
 type Navigation = CompositeNavigationProp<
   DrawerNavigationProp<MainDrawerParamList>,
-  StackNavigationProp<FeedStackParamList>
+  BottomTabNavigationProp<FeedTabParamList>
 >;
 
 function MarkerModal({markerId, isVisible, hide}: MarkerModalProps) {
@@ -42,14 +49,17 @@ function MarkerModal({markerId, isVisible, hide}: MarkerModalProps) {
 
   const handlePressModal = () => {
     navigation.navigate(mainNavigations.FEED, {
-      screen: feedNavigations.FEED_DETAIL,
+      screen: feedTabNavigations.FEED_HOME,
       params: {
-        id: post.id,
+        screen: feedNavigations.FEED_DETAIL,
+        params: {id: post.id},
       },
       // 만약 지도에서 해당 포스트를 클릭한후, 피드를 클릭하면 리스트가 나오는것이 아니라
       // 해당 포스트의 상세 화면이 나오기 때문에 리스트가 나오도록 하기 위해 아래와 같이 작성
       initial: false,
     });
+
+    hide();
   };
 
   return (

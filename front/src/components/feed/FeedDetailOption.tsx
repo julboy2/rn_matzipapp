@@ -1,4 +1,12 @@
+import {useNavigation} from '@react-navigation/native';
 import {CompoundOption} from '../common/CompoundOption';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
+import useMutateDeletePost from '@/hooks/queries/useMutateDeletePost';
+import useDetailStore from '@/store/useDetailPostStore';
+import {Alert} from 'react-native';
+import {alerts} from '@/constants/messages';
+import {feedNavigations} from '@/constants';
 
 interface FeedDetailOptionProps {
   isVisible: boolean;
@@ -6,13 +14,63 @@ interface FeedDetailOptionProps {
 }
 
 function FeedDetailOption({isVisible, hideOption}: FeedDetailOptionProps) {
+  const navigation = useNavigation<StackNavigationProp<FeedStackParamList>>();
+  const deletePost = useMutateDeletePost();
+  const {detailPost} = useDetailStore();
+
+  const handleDeletePost = () => {
+    if (!deletePost) {
+      return;
+    }
+
+    Alert.alert(alerts.DELETE_POST.TITLE, alerts.DELETE_POST.DESCRIPTION, [
+      {
+        text: '삭제',
+        onPress: () => {
+          if (detailPost) {
+            deletePost.mutate(detailPost.id, {
+              onSuccess: () => {
+                hideOption();
+                navigation.goBack();
+              },
+            });
+          }
+        },
+        style: 'destructive',
+      },
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+    ]);
+  };
+
+  const handleEditPost = () => {
+    if (!detailPost) {
+      return;
+    }
+
+    navigation.navigate(feedNavigations.EDIT_POST, {
+      location: {
+        latitude: detailPost.latitude,
+        longitude: detailPost.longitude,
+      },
+    });
+
+    hideOption();
+  };
+
   return (
     <CompoundOption isVisible={isVisible} hideOption={hideOption}>
       <CompoundOption.Background>
         <CompoundOption.Conntainer>
-          <CompoundOption.Button isDanger>삭제하기</CompoundOption.Button>
+          <CompoundOption.Button isDanger onPress={handleDeletePost}>
+            삭제하기
+          </CompoundOption.Button>
           <CompoundOption.Divider />
-          <CompoundOption.Button>수정하기</CompoundOption.Button>
+          <CompoundOption.Button onPress={handleEditPost}>
+            수정하기
+          </CompoundOption.Button>
         </CompoundOption.Conntainer>
         <CompoundOption.Conntainer>
           <CompoundOption.Button onPress={hideOption}>

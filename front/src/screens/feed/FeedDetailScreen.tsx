@@ -29,6 +29,9 @@ import useLocationStore from '@/store/useLocationStore';
 import {MainDrawerParamList} from '@/navigations/drawer/MainDrawerNavigator';
 import useModal from '@/hooks/useModal';
 import FeedDetailOption from '@/components/feed/FeedDetailOption';
+import useDetailStore from '@/store/useDetailPostStore';
+import {useEffect} from 'react';
+import useMutateFavoritePost from '@/hooks/queries/useMutateFavoritePost';
 
 type FeedDetailScreenProps = CompositeScreenProps<
   StackScreenProps<FeedStackParamList, typeof feedNavigations.FEED_DETAIL>,
@@ -38,9 +41,15 @@ type FeedDetailScreenProps = CompositeScreenProps<
 function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
   const {id} = route.params;
   const {data: post, isPending, isError} = useGetPost(id);
+  const favoriteMutaion = useMutateFavoritePost();
   const insets = useSafeAreaInsets();
   const {setMoveLocation} = useLocationStore();
+  const {setDetailPost} = useDetailStore();
   const detailOption = useModal();
+
+  useEffect(() => {
+    post && setDetailPost(post);
+  }, [post]);
 
   if (isPending || isError) {
     return <></>;
@@ -53,6 +62,11 @@ function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
       screen: mapNavigations.MAP_HOME,
     });
   };
+
+  const handlePressFavorite = () => {
+    favoriteMutaion.mutate(post.id);
+  };
+
   return (
     <>
       <ScrollView
@@ -141,7 +155,7 @@ function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
 
         {post.images.length > 0 && (
           <View style={styles.imageContentsContainer} key={post.id}>
-            <PreviewImageList imageUris={post.images} />
+            <PreviewImageList imageUris={post.images} zoomEnbale />
           </View>
         )}
       </ScrollView>
@@ -156,8 +170,13 @@ function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
             style={({pressed}) => [
               pressed && styles.bookmarkPressedContainer,
               styles.bookmarkContainer,
-            ]}>
-            <Octicons name="star-fill" size={30} color={colors.GRAY_100} />
+            ]}
+            onPress={handlePressFavorite}>
+            <Octicons
+              name="star-fill"
+              size={30}
+              color={post.isFavorite ? colors.YELLOW_500 : colors.GRAY_100}
+            />
           </Pressable>
           <CustomButton
             label="위치보기"
