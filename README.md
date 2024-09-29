@@ -58,6 +58,11 @@ react native config
 
 zustand
 
+### 하단 탭으로 페이지이동
+
+Bottom Tabs Navigator
+
+
 ### 합성컴포넌트 카카오 기술블로그
 
 https://fe-developers.kakaoent.com/2022/220731-composition-component/
