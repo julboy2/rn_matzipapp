@@ -4,6 +4,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import useMutateImages from './queries/useMutateImages';
 import {getFormDataImages} from '@/utils';
 import {Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
 
 interface ImagePickerProps {
   initialImages: ImageUri[];
@@ -51,7 +52,12 @@ function useImagePicker({initialImages = []}: ImagePickerProps) {
       })
       .catch(error => {
         if (error.code !== 'E_PICKER_CANCELLED') {
-          //에러처리
+          Toast.show({
+            type: 'error',
+            text1: '갤러리 열 수 없어요',
+            text2: '권한을 허용했는지 확인해주세요',
+            position: 'bottom',
+          });
         }
       });
   };

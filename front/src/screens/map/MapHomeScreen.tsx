@@ -26,6 +26,7 @@ import {alerts} from '@/constants/messages';
 import MarkerModal from '@/components/map/MarkerModal';
 import useModal from '@/hooks/useModal';
 import useMoveMapView from '@/hooks/useMoveMapView';
+import Toast from 'react-native-toast-message';
 
 type Navigation = CompositeNavigationProp<
   StackNavigationProp<MapStackParamList>,
@@ -50,7 +51,7 @@ function MapHomeScreen() {
   usePermission('LOCATION');
 
   // 마커를 클릭했을때 위치이동
-  const handlePressMarket = (id: number, coordinate: LatLng) => {
+  const handlePressMarker = (id: number, coordinate: LatLng) => {
     moveMapView(coordinate);
     setMarkerId(id);
     markerModal.show();
@@ -80,10 +81,19 @@ function MapHomeScreen() {
 
   const handlePressUserLocation = () => {
     if (isUserLocationError) {
+      Toast.show({
+        type: 'error',
+        text1: '위치 권한을 허용해주세요.',
+        position: 'bottom',
+      });
       return;
     }
 
     moveMapView(userLocation);
+  };
+
+  const handlePressSearch = () => {
+    navigation.navigate(mapNavigations.SEARCH_LOCATION);
   };
 
   return (
@@ -108,7 +118,7 @@ function MapHomeScreen() {
             color={color}
             score={score}
             coordinate={coordinate}
-            onPress={() => handlePressMarket(id, coordinate)}
+            onPress={() => handlePressMarker(id, coordinate)}
           />
         ))}
 
@@ -126,6 +136,9 @@ function MapHomeScreen() {
       <View style={styles.buttonList}>
         <Pressable style={styles.mapButton} onPress={handlePressAddPost}>
           <MaterialIcons name="add" color={colors.WHITE} size={25} />
+        </Pressable>
+        <Pressable style={styles.mapButton} onPress={handlePressSearch}>
+          <Ionicons name="search" color={colors.WHITE} size={25} />
         </Pressable>
         <Pressable style={styles.mapButton} onPress={handlePressUserLocation}>
           <MaterialIcons name="my-location" color={colors.WHITE} size={25} />
@@ -156,7 +169,7 @@ const styles = StyleSheet.create({
     shadowColor: colors.BLACK,
     shadowOffset: {width: 1, height: 1},
     shadowOpacity: 0.5,
-    elevation: 5,
+    elevation: 4,
   },
   buttonList: {
     position: 'absolute',

@@ -16,6 +16,9 @@ function useMutateDeletePost(mutationOptions?: UseMutationCustomOptions) {
       queryClient.invalidateQueries({
         queryKey: [queryKeys.MARKER, queryKeys.GET_MARKERS],
       });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.POST, queryKeys.GET_CALENDAR_POSTS],
+      });
 
       // 2. 삭제를 하면 삭제된 deleteId 를 주는데 deleteId 로 직접 캐시를 업데이트 할수도 있음
       //   queryClient.setQueryData<Marker[]>(

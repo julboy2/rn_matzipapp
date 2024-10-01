@@ -7,6 +7,9 @@ import {isSameAsCurrentDate, MonthYear} from '@/utils';
 import DateBox from './DateBox';
 import YearSelector from './YearSelector';
 import useModal from '@/hooks/useModal';
+import {useNavigation} from '@react-navigation/native';
+import {useEffect} from 'react';
+import CalendarHomeHeaderRight from './CalendarHomeHeaderRight';
 
 interface CalendarProps<T> {
   monthYear: MonthYear;
@@ -14,6 +17,7 @@ interface CalendarProps<T> {
   schedules: Record<number, T>;
   onPressDate: (date: number) => void;
   onChangeMonth: (increment: number) => void;
+  moveToToday: () => void;
 }
 
 function Calendar<T>({
@@ -22,14 +26,22 @@ function Calendar<T>({
   schedules,
   onPressDate,
   onChangeMonth,
+  moveToToday,
 }: CalendarProps<T>) {
   const {month, year, lastDate, firstDOW} = monthYear;
+  const navigation = useNavigation();
   const yearSelector = useModal();
 
   const handleChangeYear = (selectYear: number) => {
     onChangeMonth((selectYear - year) * 12);
     yearSelector.hide();
   };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => CalendarHomeHeaderRight(moveToToday),
+    });
+  }, [moveToToday, navigation]);
 
   return (
     <>
