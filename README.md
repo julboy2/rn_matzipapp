@@ -71,4 +71,9 @@ https://fe-developers.kakaoent.com/2022/220731-composition-component/
 
 react-native-toast-message
 
+### kakao api 
+
+카카오 지도 API 키워드로 장소 검색 사용할것
+
+
 
