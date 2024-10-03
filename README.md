@@ -97,3 +97,10 @@ Suspense 를 이용하면 로딩 처리가 필요한 컴포넌트에 선언적�
 공식 문서를 사용해도되고
 
 react-error-boundary  의 npm 을 들어가서 설치해서 사용해도된다. (지금은 npm 사용)
+
+
+### 스플래시 스크린
+
+react native splash screen  : 앱을 시작했을때 보여주는 시작화면
+
+
