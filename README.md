@@ -80,4 +80,10 @@ react-native-toast-message
 react-native-webview
 
 
+### Suspense
+
+Suspense 를 이용하면 로딩 처리가 필요한 컴포넌트에 선언적으로 코드를 작성할 수 있다.
+
+부모컴포넌트에서 비동기 데이터를 패칭하는 자식 컴포넌트를 suspense 로 감싸주면된다.
+
 
