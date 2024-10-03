@@ -1,10 +1,17 @@
+import Loader from '@/components/common/Loader';
+import RetryErrorBoundary from '@/components/common/RetryErrorBoundary';
 import FeedList from '@/components/feed/FeedList';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Suspense} from 'react';
+import {SafeAreaView, StyleSheet} from 'react-native';
 
 function FeedHomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <FeedList />
+      <RetryErrorBoundary>
+        <Suspense fallback={<Loader />}>
+          <FeedList />
+        </Suspense>
+      </RetryErrorBoundary>
     </SafeAreaView>
   );
 }

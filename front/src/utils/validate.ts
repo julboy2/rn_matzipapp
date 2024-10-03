@@ -1,3 +1,5 @@
+import {Category} from '@/types/domain';
+
 type UseInfomation = {
   email: string;
   password: string;
@@ -60,4 +62,34 @@ function validateAddPost(values: {title: string}) {
   return errors;
 }
 
-export {validateLogin, validateSignup, validateAddPost};
+function validateEditProfile(values: {nickname: string}) {
+  const errors = {
+    nickname: '',
+  };
+
+  if (values.nickname.trim() === '') {
+    errors.nickname = '닉네임을 입력해주세요.';
+  }
+
+  return errors;
+}
+
+function validateCategory(values: Category) {
+  const errors = {
+    RED: '',
+    GREEN: '',
+    YELLOW: '',
+    BLUE: '',
+    PURPLE: '',
+  };
+
+  return errors;
+}
+
+export {
+  validateLogin,
+  validateSignup,
+  validateAddPost,
+  validateEditProfile,
+  validateCategory,
+};

@@ -8,9 +8,15 @@ import Toast from 'react-native-toast-message';
 
 interface ImagePickerProps {
   initialImages: ImageUri[];
+  mode?: 'single' | 'multiple';
+  onSettled?: () => void;
 }
 
-function useImagePicker({initialImages = []}: ImagePickerProps) {
+function useImagePicker({
+  initialImages = [],
+  mode = 'multiple',
+  onSettled,
+}: ImagePickerProps) {
   const [imageUris, setImageUris] = useState(initialImages);
   const uploadImages = useMutateImages();
 
@@ -20,6 +26,15 @@ function useImagePicker({initialImages = []}: ImagePickerProps) {
       return;
     }
     setImageUris(prev => [...prev, ...uris.map(uri => ({uri}))]);
+  };
+
+  const replaceImageUri = (uris: string[]) => {
+    if (uris.length > 1) {
+      Alert.alert('이미지 개수 초과', '추가 가능한 이미지는 최대 1개 입니다.');
+      return;
+    }
+
+    setImageUris([...uris.map(uri => ({uri}))]);
   };
 
   const deleteImageUri = (uri: string) => {
@@ -39,7 +54,7 @@ function useImagePicker({initialImages = []}: ImagePickerProps) {
       mediaType: 'photo',
       multiple: true,
       includeBase64: true,
-      maxFiles: 5,
+      maxFiles: mode === 'multiple' ? 5 : 1,
       cropperChooseText: '완료',
       cropperCancelText: '취소',
     })
@@ -47,7 +62,9 @@ function useImagePicker({initialImages = []}: ImagePickerProps) {
         const formData = getFormDataImages(images);
 
         uploadImages.mutate(formData, {
-          onSuccess: data => addImageUris(data),
+          onSuccess: data =>
+            mode === 'multiple' ? addImageUris(data) : replaceImageUri(data),
+          onSettled: () => onSettled && onSettled(),
         });
       })
       .catch(error => {

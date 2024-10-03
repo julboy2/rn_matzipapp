@@ -4,6 +4,7 @@ import {
   feedNavigations,
   mainNavigations,
   mapNavigations,
+  settingNavigations,
 } from '@/constants';
 import useGetPost from '@/hooks/queries/useGetPost';
 import {FeedStackParamList} from '@/navigations/stack/FeedStackNavigator';
@@ -32,6 +33,7 @@ import FeedDetailOption from '@/components/feed/FeedDetailOption';
 import useDetailStore from '@/store/useDetailPostStore';
 import {useEffect} from 'react';
 import useMutateFavoritePost from '@/hooks/queries/useMutateFavoritePost';
+import useAuth from '@/hooks/queries/useAuth';
 
 type FeedDetailScreenProps = CompositeScreenProps<
   StackScreenProps<FeedStackParamList, typeof feedNavigations.FEED_DETAIL>,
@@ -41,6 +43,8 @@ type FeedDetailScreenProps = CompositeScreenProps<
 function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
   const {id} = route.params;
   const {data: post, isPending, isError} = useGetPost(id);
+  const {getProfileQuery} = useAuth();
+  const {categories} = getProfileQuery.data || {};
   const favoriteMutaion = useMutateFavoritePost();
   const insets = useSafeAreaInsets();
   const {setMoveLocation} = useLocationStore();
@@ -65,6 +69,13 @@ function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
 
   const handlePressFavorite = () => {
     favoriteMutaion.mutate(post.id);
+  };
+
+  const handlePressCategory = () => {
+    navigation.navigate(mainNavigations.SETTING, {
+      screen: settingNavigations.EDIT_CATEGORY,
+      initial: false,
+    });
   };
 
   return (
@@ -147,6 +158,22 @@ function FeedDetailScreen({route, navigation}: FeedDetailScreenProps) {
                     {backgroundColor: colorHex[post.color]},
                   ]}
                 />
+              </View>
+            </View>
+            <View style={styles.infoRow}>
+              <View style={styles.infoColumn}>
+                <Text style={styles.infoColumnKeyText}>카테고리</Text>
+                {categories?.[post.color] ? (
+                  <Text style={styles.infoColumnVAlueText}>
+                    {categories?.[post.color]}
+                  </Text>
+                ) : (
+                  <Pressable
+                    style={styles.emptyCategoryContainer}
+                    onPress={handlePressCategory}>
+                    <Text style={styles.infoColumnKeyText}>미설정</Text>
+                  </Pressable>
+                )}
               </View>
             </View>
           </View>
@@ -264,6 +291,13 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 10,
+  },
+  emptyCategoryContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.GRAY_300,
+    padding: 2,
+    borderRadius: 2,
   },
   addressContainer: {
     gap: 5,

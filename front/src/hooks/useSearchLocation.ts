@@ -16,18 +16,18 @@ type Meta = {
 };
 
 export type RegionInfo = {
-  id: string;
-  place_name: string;
-  category_name: string;
+  address_name: string;
   category_group_code: string;
   category_group_name: string;
+  category_name: string;
+  distance: string;
+  id: string;
   phone: string;
-  address_name: string;
+  place_name: string;
+  place_url: string;
   road_address_name: string;
   x: string;
   y: string;
-  place_url: string;
-  distance: string;
 };
 
 type RegionResponse = {
@@ -36,11 +36,20 @@ type RegionResponse = {
 };
 
 function useSearchLocation(keyword: string, location: LatLng) {
-  const [regionInfo, setRegionInfo] = useState<RegionInfo[]>();
+  const [regionInfo, setRegionInfo] = useState<RegionInfo[]>([]);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [pageParam, setPageParam] = useState(1);
 
   // keword 를 계속 입력할 때마다 요청이 가기 때문에 디바운스 처리 (맨끝 keyword 만 가져오게처리)
-  const debouncedSearchText = useDebounce(keyword, 600);
+  const debouncedSearchText = useDebounce(keyword, 300);
+
+  const fetchNextPage = () => {
+    setPageParam(prev => prev + 1);
+  };
+
+  const fetchPrevPage = () => {
+    setPageParam(prev => prev - 1);
+  };
 
   useEffect(() => {
     (async () => {
@@ -53,6 +62,7 @@ function useSearchLocation(keyword: string, location: LatLng) {
             },
           },
         );
+        setHasNextPage(!data.meta.is_end);
         setRegionInfo(data.documents);
       } catch (error) {
         setRegionInfo([]);
@@ -60,9 +70,9 @@ function useSearchLocation(keyword: string, location: LatLng) {
     })();
 
     debouncedSearchText === '' && setPageParam(1);
-  }, [debouncedSearchText, location]);
+  }, [debouncedSearchText, location, pageParam]);
 
-  return {regionInfo};
+  return {regionInfo, pageParam, fetchNextPage, fetchPrevPage, hasNextPage};
 }
 
 export default useSearchLocation;

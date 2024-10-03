@@ -14,6 +14,10 @@ const queryKeys = {
 
 const storageKeys = {
   REFRESH_TOKEN: 'refreshToken',
+  THEME_MODE: 'themeMode',
+  THEME_SYSTEM: 'themeSystem',
+  SHOW_LEGEND: 'ShowLegend',
+  MARKER_FILTER: 'markerFilter',
 } as const;
 
 export {queryKeys, storageKeys};

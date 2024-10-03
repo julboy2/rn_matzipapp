@@ -3,28 +3,36 @@ import useSearchLocation from '@/hooks/useSearchLocation';
 import useUserLocation from '@/hooks/useUserLocation';
 import {useState} from 'react';
 import {Keyboard, StyleSheet, Text, View} from 'react-native';
+import SearchRegionResult from '@/components/map/SearchRegionResult';
+import Pagination from '@/components/common/Pagination';
 
 function SearchLocationScreen() {
   const [keyword, setKeyword] = useState<string>('');
   const {userLocation} = useUserLocation();
-
-  const {regionInfo} = useSearchLocation(keyword, userLocation);
+  const {regionInfo, pageParam, fetchNextPage, fetchPrevPage, hasNextPage} =
+    useSearchLocation(keyword, userLocation);
 
   const handleChangeKeyword = (text: string) => {
     setKeyword(text);
   };
 
   return (
-    <View>
-      <Text style={styles.container}>
-        <SearchInput
-          autoFocus
-          value={keyword}
-          onChangeText={handleChangeKeyword}
-          placeholder="검색할 장소를 입력하세요."
-          onSubmit={() => Keyboard.dismiss()}
-        />
-      </Text>
+    <View style={styles.container}>
+      <SearchInput
+        autoFocus
+        value={keyword}
+        onChangeText={handleChangeKeyword}
+        placeholder="검색할 장소를 입력하세요."
+        onSubmit={() => Keyboard.dismiss()}
+      />
+      <SearchRegionResult regionInfo={regionInfo} />
+      <Pagination
+        pageParam={pageParam}
+        fetchPrevPage={fetchPrevPage}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        totalLength={regionInfo.length}
+      />
     </View>
   );
 }
