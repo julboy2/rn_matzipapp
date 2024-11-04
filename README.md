@@ -1,6 +1,6 @@
 ### 실행
 
-npx react-native
+yarn start
 
 
 ### 구글맵
