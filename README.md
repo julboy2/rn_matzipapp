@@ -3,6 +3,9 @@
 yarn start
 
 
+상태확인후 설치 <br />
+npx react-native doctor
+
 ### 구글맵
 
 google 키발급 및  설정 : google map platform
